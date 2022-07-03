@@ -192,7 +192,6 @@ foreach ($data as $value) {
                     });
                 });
             </script>
-            ______________
             <?php
         }
     }elseif (isset($_POST['login'])) {

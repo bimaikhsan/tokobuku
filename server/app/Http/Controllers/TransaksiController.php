@@ -46,35 +46,37 @@ class TransaksiController extends Controller
             foreach ($data->data as $key => $value) {
                 $Buku = Buku::find($key);
                 $kurangbuku = $Buku->jumlah-$value->jumlah;
+                Buku::whereId($key)->update([
+                    'jumlah'   => $kurangbuku,
+                ]);
                 if ($kurangbuku == 0 || $Buku->jumlah == 0) {
                     // return redirect('http://localhost/tokobuku/index.php?site=error&msg=habis');
                     return response()->json([
                         'success' => false,
                         'message' => 'Transaksi Gagal Buku Habis!',
                     ], 400);
-                }else{
-                    $Transaksi = Transaksi::create([
-                        'id_user'     => $request->input('id_user'),
-                        'buku'   => $request->input('buku'),
-                        'metode'   => $request->input('metode'),
-                    ]);
-                    Buku::whereId($key)->update([
-                        'jumlah'   => $kurangbuku,
-                    ]);
-                    if ($Transaksi) {
-                        return response()->json([
-                            'success' => true,
-                            'message' => 'Transaksi Berhasil Disimpan!',
-                            'data' => $Transaksi
-                        ], 201);
-                        // return redirect('http://localhost/tokobuku/index.php?site=keranjang');
-                    } else {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Transaksi Gagal Disimpan!',
-                        ], 400);
-                    }
                 }
+            }
+            $Transaksi = Transaksi::create([
+                'id_user'     => $request->input('id_user'),
+                'buku'   => $request->input('buku'),
+                'metode'   => $request->input('metode'),
+            ]);
+            
+            if ($Transaksi) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Transaksi Berhasil Disimpan!',
+                    'data' => $Transaksi,
+                    'key' => $key,
+                    'buku' => $Buku
+                ], 201);
+                // return redirect('http://localhost/tokobuku/index.php?site=keranjang');
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Transaksi Gagal Disimpan!',
+                ], 400);
             }
             // return response()->json($data);
         }
