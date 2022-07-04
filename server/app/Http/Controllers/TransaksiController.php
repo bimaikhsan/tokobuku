@@ -49,7 +49,7 @@ class TransaksiController extends Controller
                 Buku::whereId($key)->update([
                     'jumlah'   => $kurangbuku,
                 ]);
-                if ($kurangbuku == 0 || $Buku->jumlah == 0) {
+                if ($kurangbuku < 0 || $Buku->jumlah < 0) {
                     // return redirect('http://localhost/tokobuku/index.php?site=error&msg=habis');
                     return response()->json([
                         'success' => false,
